@@ -12,14 +12,13 @@ from sklearn.model_selection import train_test_split
 # ==========================================
 # CONFIGURATION
 # ==========================================
-MODEL_VARIANT = "recommended"  # "sm", "md", "recommended", or "lg"
 EPOCHS = 30
 BATCH_SIZE = 128
 LEARNING_RATE = 0.001
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {device}")
-print(f"Model Variant: {MODEL_VARIANT.upper()} | Epochs: {EPOCHS}")
+print(f"Epochs: {EPOCHS}")
 
 # ==========================================
 # DATA LOADING
@@ -84,36 +83,7 @@ test_loader = DataLoader(MNISTDataset(test_df, is_test=True), batch_size=BATCH_S
 # MODEL VARIANTS
 # ==========================================
 
-class SmallCNN(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.features = nn.Sequential(
-            nn.Conv2d(1, 16, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),
-            nn.Conv2d(16, 32, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2)
-        )
-        self.classifier = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(32 * 7 * 7, 64), nn.ReLU(), nn.Dropout(0.25),
-            nn.Linear(64, 10)
-        )
-    def forward(self, x):
-        return self.classifier(self.features(x))
 
-class MediumCNN(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.features = nn.Sequential(
-            nn.Conv2d(1, 16, 3, padding=1), nn.BatchNorm2d(16), nn.ReLU(), nn.MaxPool2d(2),
-            nn.Conv2d(16, 32, 3, padding=1), nn.BatchNorm2d(32), nn.ReLU(), nn.MaxPool2d(2),
-            nn.Conv2d(32, 64, 3, padding=1), nn.BatchNorm2d(64), nn.ReLU(), nn.MaxPool2d(2, padding=1)
-        )
-        self.classifier = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(64 * 4 * 4, 128), nn.ReLU(), nn.Dropout(0.25),
-            nn.Linear(128, 10)
-        )
-    def forward(self, x):
-        return self.classifier(self.features(x))
 
 class RecommendedCNN(nn.Module):
     def __init__(self):
@@ -136,33 +106,7 @@ class RecommendedCNN(nn.Module):
     def forward(self, x):
         return self.classifier(self.features(x))
 
-class LargeCNN(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.features = nn.Sequential(
-            nn.Conv2d(1, 32, 3, padding=1), nn.BatchNorm2d(32), nn.ReLU(),
-            nn.Conv2d(32, 32, 3, padding=1), nn.BatchNorm2d(32), nn.ReLU(), nn.MaxPool2d(2), nn.Dropout2d(0.25),
-
-            nn.Conv2d(32, 64, 3, padding=1), nn.BatchNorm2d(64), nn.ReLU(),
-            nn.Conv2d(64, 64, 3, padding=1), nn.BatchNorm2d(64), nn.ReLU(), nn.MaxPool2d(2), nn.Dropout2d(0.25),
-
-            nn.Conv2d(64, 128, 3, padding=1), nn.BatchNorm2d(128), nn.ReLU(),
-            nn.Conv2d(128, 128, 3, padding=1), nn.BatchNorm2d(128), nn.ReLU(), nn.MaxPool2d(2, padding=1), nn.Dropout2d(0.25),
-
-            nn.Conv2d(128, 256, 3, padding=1), nn.BatchNorm2d(256), nn.ReLU(),
-            nn.Conv2d(256, 256, 3, padding=1), nn.BatchNorm2d(256), nn.ReLU(), nn.MaxPool2d(2), nn.Dropout2d(0.25)
-        )
-        self.classifier = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(256 * 2 * 2, 512), nn.BatchNorm1d(512), nn.ReLU(), nn.Dropout(0.5),
-            nn.Linear(512, 10)
-        )
-    def forward(self, x):
-        return self.classifier(self.features(x))
-
-models = {"sm": SmallCNN, "md": MediumCNN, "recommended": RecommendedCNN, "lg": LargeCNN}
-
-model = models[MODEL_VARIANT]().to(device)
+model = RecommendedCNN().to(device)
 total_params = sum(p.numel() for p in model.parameters())
 print(f"Parameters: {total_params:,}")
 

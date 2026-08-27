@@ -15,6 +15,10 @@ The data files `train.csv` and `test.csv` contain gray-scale images of hand-draw
 
 Data can be downloaded directly from the [Kaggle Data Page](https://www.kaggle.com/competitions/digit-recognizer/data).
 
+## 🏆 Results
+
+With this work, we managed to get a score of **0.99546**, securing a **Top 100** position on the Kaggle leaderboard!
+
 ## 💡 Approach & Methodology
 
 Our goal is to build a robust architecture that generalizes well, strictly adhering to standard machine learning practices and aiming for a >99% validation accuracy without data leakage.
@@ -23,16 +27,9 @@ Our goal is to build a robust architecture that generalizes well, strictly adher
 
 We train **only** on the provided 42,000 images in the training set and use a designated validation split for evaluation.
 
-### 2. Scalable Model Architectures
+### 2. Model Architecture
 
-To closely monitor model efficiency and properly balance underfitting vs. overfitting, we have implemented four architecture variants:
-
-- **SM (Small):** A lightweight 2-block CNN (16➔32 filters) designed for rapid local CPU testing. Acts as a baseline to detect underfitting.
-- **MD (Medium):** A standard 3-block CNN (16➔32➔64 filters) without dropout, providing a middle ground for efficiency testing.
-- **Recommended (Community Standard):** The primary 3-block architecture (32➔64➔128 filters) with heavy `BatchNorm` and `Dropout` (0.25/0.50). Known to achieve >99.4% accuracy.
-- **LG (Large):** An extremely deep 4-block CNN (32➔64➔128➔256 filters). Used to push the limits of the dataset and test severe overfitting boundaries.
-
-*Batch Normalization* and heavy *Dropout* are critical in the larger variants to stabilize training and prevent overfitting on the limited dataset.
+We use a deep 3-block CNN architecture (32➔64➔128 filters) known to achieve >99.4% accuracy. *Batch Normalization* and heavy *Dropout* (0.25/0.50) are critical in this architecture to stabilize training and prevent overfitting on the limited dataset.
 
 ### 3. Careful Data Augmentation
 
