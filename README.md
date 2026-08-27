@@ -23,16 +23,16 @@ Our goal is to build a robust architecture that generalizes well, strictly adher
 
 We train **only** on the provided 42,000 images in the training set and use a designated validation split for evaluation.
 
-### 2. Model Architecture: Deep 3-Block CNN
+### 2. Scalable Model Architectures
 
-Based on community best practices and top-performing discussions, we utilize a Deep Convolutional Neural Network (CNN) architecture with three main blocks:
+To closely monitor model efficiency and properly balance underfitting vs. overfitting, we have implemented four architecture variants:
 
-- **Block 1:** `Conv2D(32)` ➔ `BatchNorm` ➔ `ReLU` ➔ `Conv2D(32)` ➔ `BatchNorm` ➔ `ReLU` ➔ `MaxPool` ➔ `Dropout(0.25)`
-- **Block 2:** `Conv2D(64)` ➔ `BatchNorm` ➔ `ReLU` ➔ `Conv2D(64)` ➔ `BatchNorm` ➔ `ReLU` ➔ `MaxPool` ➔ `Dropout(0.25)`
-- **Block 3:** `Conv2D(128)` ➔ `BatchNorm` ➔ `ReLU` ➔ `Conv2D(128)` ➔ `BatchNorm` ➔ `ReLU` ➔ `MaxPool` ➔ `Dropout(0.25)`
-- **Classification Head:** `Dense(256)` ➔ `BatchNorm` ➔ `ReLU` ➔ `Dropout(0.5)` ➔ `Dense(10)`
+- **SM (Small):** A lightweight 2-block CNN (16➔32 filters) designed for rapid local CPU testing. Acts as a baseline to detect underfitting.
+- **MD (Medium):** A standard 3-block CNN (16➔32➔64 filters) without dropout, providing a middle ground for efficiency testing.
+- **Recommended (Community Standard):** The primary 3-block architecture (32➔64➔128 filters) with heavy `BatchNorm` and `Dropout` (0.25/0.50). Known to achieve >99.4% accuracy.
+- **LG (Large):** An extremely deep 4-block CNN (32➔64➔128➔256 filters). Used to push the limits of the dataset and test severe overfitting boundaries.
 
-*Batch Normalization* and heavy *Dropout* are critical here to stabilize training and prevent overfitting on the limited dataset.
+*Batch Normalization* and heavy *Dropout* are critical in the larger variants to stabilize training and prevent overfitting on the limited dataset.
 
 ### 3. Careful Data Augmentation
 
